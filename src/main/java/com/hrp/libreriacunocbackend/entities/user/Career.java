@@ -1,4 +1,4 @@
-package com.hrp.libreriacunocbackend.entities;
+package com.hrp.libreriacunocbackend.entities.user;
 
 import jakarta.persistence.*;
 import lombok.Getter;

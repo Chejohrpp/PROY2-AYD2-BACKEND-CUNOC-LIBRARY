@@ -1,6 +1,6 @@
 package com.hrp.libreriacunocbackend.entities.user;
 
-import com.hrp.libreriacunocbackend.entities.Career;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
