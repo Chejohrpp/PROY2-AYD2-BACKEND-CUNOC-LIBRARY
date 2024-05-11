@@ -15,7 +15,7 @@ public class Fee {
 
     @Id
     @Column(name = "borrow_id_borrow")
-    private Long idBorrow;
+    private Long borrowId;
 
     @OneToOne
     @MapsId
@@ -24,5 +24,8 @@ public class Fee {
 
     private LocalDate date;
 
-    private Double price;
+    private Double fee;
+
+    @Column(name = "late_fee")
+    private Double lateFee;
 }

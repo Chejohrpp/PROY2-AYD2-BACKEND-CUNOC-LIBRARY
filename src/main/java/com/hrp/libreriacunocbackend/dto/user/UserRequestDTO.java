@@ -13,7 +13,7 @@ public class UserRequestDTO {
 
     public UserRequestDTO(StudentRequestDTO studentRequestDTO) {
         this.username = studentRequestDTO.getUsername();
-        this.password = studentRequestDTO.getPassword();
+        this.password = studentRequestDTO.getCarnet();
         this.role = Role.STUDENT;
     }
 

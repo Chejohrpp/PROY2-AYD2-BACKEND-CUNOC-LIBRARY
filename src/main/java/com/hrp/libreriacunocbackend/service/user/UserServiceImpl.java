@@ -47,6 +47,11 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
+    public Optional<User> findUser(String username) {
+        return userRepository.findByUsername(username);
+    }
+
+    @Override
     public User editUser(UserRequestDTO userRequestDTO) throws NotAcceptableException {
         return null;
     }
