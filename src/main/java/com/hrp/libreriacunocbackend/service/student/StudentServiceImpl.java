@@ -10,16 +10,20 @@ import com.hrp.libreriacunocbackend.entities.user.User;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
 import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
+import com.hrp.libreriacunocbackend.repository.specifications.user.StudentSpecification;
 import com.hrp.libreriacunocbackend.repository.user.StudentRepository;
 import com.hrp.libreriacunocbackend.service.career.CareerService;
 import com.hrp.libreriacunocbackend.service.user.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.lang.reflect.Field;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImpl implements StudentService{
@@ -42,17 +46,8 @@ public class StudentServiceImpl implements StudentService{
         /*VALIDATIONS*/
         validateStudentRequest(studentRequestDTO);
 
-        Optional<Student> foundStudent = studentRepository.findByCarnet(studentRequestDTO.getCarnet());
-        if (foundStudent.isPresent()) {
-            throw new NotAcceptableException("Carnet already taken");
-        }
-        Optional<User> foundUser = userService.findUser(studentRequestDTO.getUsername());
-        if (foundUser.isPresent()){
-            throw new NotAcceptableException("Username already taken");
-        }
         Career career = careerService.findCarrerById(studentRequestDTO.getIdCareer())
                 .orElseThrow(() -> new EntityNotFoundException(String.format("career %s not found", studentRequestDTO.getIdCareer())));
-
 
         UserRequestDTO userRequestDTO = new UserRequestDTO(studentRequestDTO);
         User newUser = userService.createUser(userRequestDTO);
@@ -72,12 +67,19 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public List<StudentResponseDTO> getByRange(Integer startIndex, Integer endIndex) throws NotAcceptableException, BadRequestException {
-        return List.of();
+        return studentRepository.findByRange(startIndex,endIndex)
+                .stream()
+                .map(StudentResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<StudentResponseDTO> getByAttribute(StudentRequestAttributeDTO studentRequestAttributeDTO) throws NotAcceptableException, BadRequestException {
-        return List.of();
+//        validateStudentRequestAttribute(studentRequestAttributeDTO);
+        return studentRepository.findAll(StudentSpecification.likeAttributes(studentRequestAttributeDTO.getAttributesName(), studentRequestAttributeDTO.getFilter()))
+                .stream()
+                .map(StudentResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
     private void validateStudentRequest(StudentRequestDTO studentRequestDTO) throws NotAcceptableException {
@@ -102,7 +104,27 @@ public class StudentServiceImpl implements StudentService{
         if (studentRequestDTO.getCarnet().length() > 20) {
             throw new NotAcceptableException("Carnet exceeds maximum length");
         }
+        Optional<Student> foundStudent = studentRepository.findByCarnet(studentRequestDTO.getCarnet());
+        if (foundStudent.isPresent()) {
+            throw new NotAcceptableException("carnet already taken");
+        }
+        Optional<User> foundUser = userService.findUser(studentRequestDTO.getUsername());
+        if (foundUser.isPresent()){
+            throw new NotAcceptableException("Username already taken");
+        }
     }
 
+    // Obtain the fields from the student class
+    private List<String> getStudentAttributeNames() {
+        return Arrays.stream(Student.class.getDeclaredFields())
+                .map(Field::getName)
+                .map(String::trim)
+                .collect(Collectors.toList());
+    }
+
+    //
+    private boolean isValidAttribute(String attributeName) {
+        return getStudentAttributeNames().contains(attributeName);
+    }
 
 }
