@@ -24,17 +24,18 @@ public class Book {
     private String title;
 
     private Integer amount;
+
     private Double price;
+
     @Column(name = "date_publish")
     private LocalDate datePublish;
 
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "author_id_author", referencedColumnName = "id_author", insertable = false, updatable = false)
+    @JoinColumn(name = "author_id_author")
     private Author author;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "editorial_id_editorial", referencedColumnName = "id_editorial", insertable = false, updatable = false)
+    @JoinColumn(name = "editorial_id_editorial")
     private Editorial editorial;
 
 

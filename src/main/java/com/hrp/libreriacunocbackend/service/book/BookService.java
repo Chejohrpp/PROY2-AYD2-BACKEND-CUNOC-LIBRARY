@@ -7,12 +7,13 @@ import com.hrp.libreriacunocbackend.dto.book.BookResponseDTO;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
 import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
+import org.springframework.validation.BindingResult;
 
 import java.util.List;
 
 public interface BookService {
 
-    BookResponseDTO createBook(BookRequestDTO bookRequestDTO) throws NotAcceptableException;
+    BookResponseDTO createBook(BookRequestDTO bookRequestDTO) throws NotAcceptableException, EntityNotFoundException;
 
     BookResponseDTO UpdateAmountCopies(BookRequestAmountCopiesDTO bookRequestAmountCopiesDTO) throws NotAcceptableException, EntityNotFoundException;
 

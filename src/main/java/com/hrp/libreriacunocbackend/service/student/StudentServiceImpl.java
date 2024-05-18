@@ -75,7 +75,6 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public List<StudentResponseDTO> getByAttribute(StudentRequestAttributeDTO studentRequestAttributeDTO) throws NotAcceptableException, BadRequestException {
-//        validateStudentRequestAttribute(studentRequestAttributeDTO);
         return studentRepository.findAll(StudentSpecification.likeAttributes(studentRequestAttributeDTO.getAttributesName(), studentRequestAttributeDTO.getFilter()))
                 .stream()
                 .map(StudentResponseDTO::new)
