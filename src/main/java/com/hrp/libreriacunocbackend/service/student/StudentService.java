@@ -24,4 +24,8 @@ public interface StudentService {
     Optional<Student> getByCarnet(String carnet);
 
     Optional<Student> getById(Long id);
+
+    List<Student> getAll();
+
+    List<Student> getStudentsInPenalty();
 }

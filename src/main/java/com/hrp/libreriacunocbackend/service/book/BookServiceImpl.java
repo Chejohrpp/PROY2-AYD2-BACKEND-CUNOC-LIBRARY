@@ -109,6 +109,16 @@ public class BookServiceImpl implements BookService{
         return bookRepository.findById(id);
     }
 
+    @Override
+    public List<Book> getBooksOutOfStock() {
+        return bookRepository.findBooksOutOfStock();
+    }
+
+    @Override
+    public List<Book> getBooksNeverBorrowed(){
+        return bookRepository.findBooksNeverBorrowed();
+    }
+
     private void validateBookRequest(BookRequestDTO bookRequestDTO) throws NotAcceptableException {
         if (bookRequestDTO.getIsbn() == null || bookRequestDTO.getIsbn().isBlank() || bookRequestDTO.getIsbn().length() < 7 || bookRequestDTO.getIsbn().length() > 13) {
             throw new NotAcceptableException("ISBN cannot be null, empty, and must be between 7 and 13 characters");

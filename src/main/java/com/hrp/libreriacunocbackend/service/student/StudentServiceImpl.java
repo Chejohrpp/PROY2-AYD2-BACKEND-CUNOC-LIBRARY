@@ -142,4 +142,14 @@ public class StudentServiceImpl implements StudentService{
         return studentRepository.findById(id);
     }
 
+    @Override
+    public List<Student> getAll(){
+        return studentRepository.findAll();
+    }
+
+    @Override
+    public List<Student> getStudentsInPenalty() {
+        return studentRepository.findStudentsInPenalty();
+    }
+
 }

@@ -28,4 +28,8 @@ public interface BookService {
     Optional<Book> getByIsbn(String isbn);
 
     Optional<Book> getById(Long id);
+
+    List<Book> getBooksOutOfStock();
+
+    List<Book> getBooksNeverBorrowed();
 }

@@ -16,4 +16,6 @@ public interface StudentRepository extends JpaRepository<Student, Long>, JpaSpec
     @Query(value = "SELECT * FROM student ORDER BY user_id_user ASC LIMIT :startIndex, :endIndex", nativeQuery = true)
     List<Student> findByRange(@Param("startIndex") Integer startIndex, @Param("endIndex") Integer endIndex);
 
+    @Query(value = "SELECT * FROM student WHERE can_borrow = false", nativeQuery = true)
+    List<Student> findStudentsInPenalty();
 }

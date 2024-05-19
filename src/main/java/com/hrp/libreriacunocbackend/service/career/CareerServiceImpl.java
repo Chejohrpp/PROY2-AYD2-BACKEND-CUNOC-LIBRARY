@@ -2,14 +2,15 @@ package com.hrp.libreriacunocbackend.service.career;
 
 import com.hrp.libreriacunocbackend.dto.career.CareerRequestDTO;
 import com.hrp.libreriacunocbackend.dto.career.CareerResponseDTO;
+import com.hrp.libreriacunocbackend.entities.Fee;
 import com.hrp.libreriacunocbackend.entities.user.Career;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
-import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.repository.career.CareerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -54,5 +55,10 @@ public class CareerServiceImpl implements CareerService {
                 .stream()
                 .map(CareerResponseDTO :: new)
                 .collect(Collectors.toList());
+    }
+    
+    @Override
+    public List<Career> getAll(){
+        return careerRepository.findAll();
     }
 }

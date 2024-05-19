@@ -4,13 +4,16 @@ import com.hrp.libreriacunocbackend.dto.borrow.*;
 import com.hrp.libreriacunocbackend.dto.fee.FeeRequestDTO;
 import com.hrp.libreriacunocbackend.dto.fee.FeeResponseDTO;
 import com.hrp.libreriacunocbackend.entities.Borrow;
+import com.hrp.libreriacunocbackend.entities.Fee;
 import com.hrp.libreriacunocbackend.entities.book.Book;
+import com.hrp.libreriacunocbackend.entities.user.Career;
 import com.hrp.libreriacunocbackend.entities.user.Student;
 import com.hrp.libreriacunocbackend.enums.borrow.State;
 import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.repository.BorrowRepository;
 import com.hrp.libreriacunocbackend.service.book.BookService;
+import com.hrp.libreriacunocbackend.service.career.CareerService;
 import com.hrp.libreriacunocbackend.service.fee.FeeService;
 import com.hrp.libreriacunocbackend.service.student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BorrowServiceImpl implements BorrowService{
 
@@ -26,13 +31,15 @@ public class BorrowServiceImpl implements BorrowService{
     private final StudentService studentService;
     private final BookService bookService;
     private final FeeService feeService;
+    private final CareerService careerService;
 
     @Autowired
-    public BorrowServiceImpl(BorrowRepository borrowRepository, StudentService studentService, BookService bookService, FeeService feeService) {
+    public BorrowServiceImpl(BorrowRepository borrowRepository, StudentService studentService, BookService bookService, FeeService feeService, CareerService careerService) {
         this.borrowRepository = borrowRepository;
         this.studentService = studentService;
         this.bookService = bookService;
         this.feeService = feeService;
+        this.careerService = careerService;
     }
 
     @Override
@@ -102,7 +109,7 @@ public class BorrowServiceImpl implements BorrowService{
         double totalFee = calculateTotalFee(borrow, borrowRequestFeeDTO.getDate());
 
         // Crear una instancia de Fee para registrar el pago
-        FeeRequestDTO feeRequestDTO = new FeeRequestDTO(borrow.getIdBorrow(), borrowRequestFeeDTO.getDate(), totalFee, 0.0);
+        FeeRequestDTO feeRequestDTO = new FeeRequestDTO(borrow, borrowRequestFeeDTO.getDate(), totalFee, 0.0);
         FeeResponseDTO feeResponseDTO = feeService.create(feeRequestDTO);
 
         // Actualizar el estado del préstamo a devuelto
@@ -111,6 +118,72 @@ public class BorrowServiceImpl implements BorrowService{
 
         return new BorrowResponseFeeDTO(borrowResponseUpdateStateDTO);
     }
+
+    @Override
+    public Map<String, Object> getMostBorrowedCareerInInterval(LocalDate startDate, LocalDate endDate) {
+        List<Career> careers = careerService.getAll();
+
+        Career mostBorrowedCareer = null;
+        int maxBorrows = 0;
+
+        for (Career career : careers) {
+            int borrows = borrowRepository.countBorrowsByCareerInInterval(career.getIdCareer(), startDate, endDate);
+            if (borrows > maxBorrows) {
+                mostBorrowedCareer = career;
+                maxBorrows = borrows;
+            }
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("mostBorrowedCareer", mostBorrowedCareer);
+        result.put("borrowsInMostBorrowedCareer", maxBorrows);
+        result.put("borrowsOfStudentsInMostBorrowedCareer", borrowRepository.findBorrowsByCareerInInterval(mostBorrowedCareer.getIdCareer(), startDate, endDate));
+
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getLateFeesAndLateBorrowsByStudentAndInterval(Long studentId, LocalDate startDate, LocalDate endDate) {
+        List<Fee> lateFees = feeService.findLateFeesByStudentAndInterval(studentId, startDate, endDate);
+        List<Borrow> lateBorrows = borrowRepository.findLateBorrowsByStudentAndInterval(studentId, startDate, endDate);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("lateFees", lateFees);
+        result.put("lateBorrows", lateBorrows);
+        return result;
+    }
+
+    @Override
+    public Map<String, Object> getStudentWithMostBorrowsInInterval(LocalDate startDate, LocalDate endDate) {
+        List<Student> students = studentService.getAll();
+
+        Student studentWithMostBorrows = null;
+        int maxBorrows = 0;
+
+        for (Student student : students) {
+            int borrows = borrowRepository.countBorrowsByStudentInInterval(student.getUserId(), startDate, endDate);
+            if (borrows > maxBorrows) {
+                studentWithMostBorrows = student;
+                maxBorrows = borrows;
+            }
+        }
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("studentWithMostBorrows", studentWithMostBorrows);
+        result.put("borrowsByStudentWithMostBorrows", borrowRepository.findBorrowsByStudentAndInterval(studentWithMostBorrows.getUserId(), startDate, endDate));
+        return result;
+    }
+
+    @Override
+    public List<Borrow> getActivateBorrowsByStudent(Long studentId) {
+        return borrowRepository.findActiveBorrowsByStudent(studentId);
+    }
+
+    @Override
+    public List<Borrow> getCurrentBorrowsByStudent(Long studentId){
+        return borrowRepository.findCurrentBorrowsByStudent(studentId);
+    }
+
 
     @Override
     public void updateBorrowStatus(List<Borrow> borrows) {
@@ -138,6 +211,18 @@ public class BorrowServiceImpl implements BorrowService{
         }
     }
 
+    @Override
+    public double calculatePenaltyAmount(Long studentId) throws NotAcceptableException {
+        List<Borrow> borrows = borrowRepository.findCurrentBorrowsByStudent(studentId);
+        double totalPenaltyAmount = 0.0;
+
+        for (Borrow borrow : borrows) {
+            totalPenaltyAmount += calculateTotalFee(borrow, LocalDateTime.now());
+        }
+
+        return totalPenaltyAmount;
+    }
+
 
     private double calculateTotalFee(Borrow borrow, LocalDateTime returnDate) throws NotAcceptableException {
         LocalDate borrowDate = borrow.getDateBorrow();
@@ -150,6 +235,11 @@ public class BorrowServiceImpl implements BorrowService{
             double lateFee = lateDays * 15.0; // Q15.00 por día de atraso
             // Se calcula la cuota por los días reglamentarios de préstamo
             double regularFee = daysAllowed * 5.0; // Q5.00 por día de préstamo
+            if (daysBorrowed > 30 && borrow.getState() == State.LOST) {
+                // Aplicar sanción por libro perdido después de un mes
+                lateFee += borrow.getBook().getPrice() + 150.00;
+            }
+            // Puedes agregar lógica adicional aquí para calcular otras tarifas (por ejemplo, moras)
             // El total a pagar es la suma de la cuota regular y la mora
             return regularFee + lateFee;
         } else {

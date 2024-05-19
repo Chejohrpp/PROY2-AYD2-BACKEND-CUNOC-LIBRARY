@@ -17,4 +17,6 @@ public interface CareerService {
     Optional<Career> findCarrerById(Long id);
 
     List<CareerResponseDTO> getByFilter(String filter) throws BadRequestException;
+
+    List<Career> getAll();
 }
