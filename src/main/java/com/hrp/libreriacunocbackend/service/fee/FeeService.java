@@ -7,7 +7,7 @@ import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 
 public interface FeeService {
 
-    FeeResponseDTO create(FeeRequestDTO feeRequestDTO) throws NotAcceptableException, BadRequestException;
+    FeeResponseDTO create(FeeRequestDTO feeRequestDTO) throws NotAcceptableException;
 
 
 

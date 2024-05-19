@@ -81,6 +81,12 @@ public class StudentServiceImpl implements StudentService{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public StudentResponseDTO updateStudentStudent(Student student){
+        student = studentRepository.save(student);
+        return new StudentResponseDTO(student);
+    }
+
     private void validateStudentRequest(StudentRequestDTO studentRequestDTO) throws NotAcceptableException {
         if (studentRequestDTO.getName() == null || studentRequestDTO.getName().isEmpty()) {
             throw new NotAcceptableException("Name cannot be null or empty");
@@ -124,6 +130,16 @@ public class StudentServiceImpl implements StudentService{
     //
     private boolean isValidAttribute(String attributeName) {
         return getStudentAttributeNames().contains(attributeName);
+    }
+
+    @Override
+    public Optional<Student> getByCarnet(String carnet){
+        return studentRepository.findByCarnet(carnet);
+    }
+
+    @Override
+    public Optional<Student> getById(Long id){
+        return studentRepository.findById(id);
     }
 
 }

@@ -16,7 +16,6 @@ import com.hrp.libreriacunocbackend.service.author.AuthorService;
 import com.hrp.libreriacunocbackend.service.editorial.EditorialService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 import javax.validation.Valid;
 import java.time.LocalDate;
@@ -100,9 +99,19 @@ public class BookServiceImpl implements BookService{
 
     }
 
+    @Override
+    public Optional<Book> getByIsbn(String isbn) {
+        return bookRepository.findByIsbn(isbn);
+    }
+
+    @Override
+    public Optional<Book> getById(Long id){
+        return bookRepository.findById(id);
+    }
+
     private void validateBookRequest(BookRequestDTO bookRequestDTO) throws NotAcceptableException {
-        if (bookRequestDTO.getIsbn() == null || bookRequestDTO.getIsbn().isBlank() || bookRequestDTO.getIsbn().length() < 10 || bookRequestDTO.getIsbn().length() > 13) {
-            throw new NotAcceptableException("ISBN cannot be null, empty, and must be between 10 and 13 characters");
+        if (bookRequestDTO.getIsbn() == null || bookRequestDTO.getIsbn().isBlank() || bookRequestDTO.getIsbn().length() < 7 || bookRequestDTO.getIsbn().length() > 13) {
+            throw new NotAcceptableException("ISBN cannot be null, empty, and must be between 7 and 13 characters");
         }
         if (bookRequestDTO.getIdEditorial() == null || bookRequestDTO.getIdEditorial().isBlank()) {
             throw new NotAcceptableException("Editorial ID cannot be null or empty");
