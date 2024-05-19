@@ -17,6 +17,7 @@ import com.hrp.libreriacunocbackend.service.career.CareerService;
 import com.hrp.libreriacunocbackend.service.fee.FeeService;
 import com.hrp.libreriacunocbackend.service.student.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class BorrowServiceImpl implements BorrowService{
 
     private final BorrowRepository borrowRepository;
@@ -221,6 +223,11 @@ public class BorrowServiceImpl implements BorrowService{
         }
 
         return totalPenaltyAmount;
+    }
+
+    @Override
+    public long count() {
+        return borrowRepository.count();
     }
 
 

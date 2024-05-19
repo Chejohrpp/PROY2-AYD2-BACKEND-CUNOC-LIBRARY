@@ -3,6 +3,7 @@ package com.hrp.libreriacunocbackend.controllers.users;
 import com.hrp.libreriacunocbackend.dto.career.CareerRequestDTO;
 import com.hrp.libreriacunocbackend.dto.career.CareerResponseDTO;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.service.career.CareerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +28,7 @@ public class CareerController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<CareerResponseDTO> createCareer(@RequestBody CareerRequestDTO careerRequestDTO) throws NotAcceptableException {
+    public ResponseEntity<CareerResponseDTO> createCareer(@RequestBody CareerRequestDTO careerRequestDTO) throws NotAcceptableException, DuplicatedEntityException {
         return ResponseEntity.status(HttpStatus.CREATED).body(careerService.createCareer(careerRequestDTO));
     }
 

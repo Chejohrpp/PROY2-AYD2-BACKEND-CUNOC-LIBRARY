@@ -3,6 +3,7 @@ package com.hrp.libreriacunocbackend.controllers.book;
 import com.hrp.libreriacunocbackend.dto.editorial.EditorialRequestDTO;
 import com.hrp.libreriacunocbackend.dto.editorial.EditorialResponseDTO;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.service.editorial.EditorialService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class EditorialController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<EditorialResponseDTO> create(@RequestBody EditorialRequestDTO editorialRequestDTO) throws NotAcceptableException {
+    public ResponseEntity<EditorialResponseDTO> create(@RequestBody EditorialRequestDTO editorialRequestDTO) throws NotAcceptableException, DuplicatedEntityException {
         return ResponseEntity.status(HttpStatus.CREATED).body(editorialService.create(editorialRequestDTO));
     }
 

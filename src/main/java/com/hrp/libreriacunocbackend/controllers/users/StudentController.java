@@ -4,6 +4,7 @@ import com.hrp.libreriacunocbackend.dto.student.StudentRequestAttributeDTO;
 import com.hrp.libreriacunocbackend.dto.student.StudentRequestDTO;
 import com.hrp.libreriacunocbackend.dto.student.StudentResponseDTO;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.service.student.StudentService;
@@ -29,7 +30,7 @@ public class StudentController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<StudentResponseDTO> createStudent(@RequestBody StudentRequestDTO studentRequestDTO) throws NotAcceptableException, EntityNotFoundException {
+    public ResponseEntity<StudentResponseDTO> createStudent(@RequestBody StudentRequestDTO studentRequestDTO) throws NotAcceptableException, EntityNotFoundException, DuplicatedEntityException {
         return ResponseEntity.status(HttpStatus.OK).body(studentService.createStudent(studentRequestDTO));
     }
 

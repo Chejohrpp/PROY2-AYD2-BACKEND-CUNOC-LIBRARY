@@ -31,4 +31,6 @@ public interface BorrowService {
     void updateBorrowStatus(List<Borrow> borrows);
 
     double calculatePenaltyAmount(Long studentId) throws NotAcceptableException;
+
+    long count();
 }

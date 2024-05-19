@@ -6,6 +6,7 @@ import com.hrp.libreriacunocbackend.dto.book.BookRequestDTO;
 import com.hrp.libreriacunocbackend.dto.book.BookResponseDTO;
 import com.hrp.libreriacunocbackend.entities.book.Book;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import org.springframework.validation.BindingResult;
@@ -15,7 +16,7 @@ import java.util.Optional;
 
 public interface BookService {
 
-    BookResponseDTO createBook(BookRequestDTO bookRequestDTO) throws NotAcceptableException, EntityNotFoundException;
+    BookResponseDTO createBook(BookRequestDTO bookRequestDTO) throws NotAcceptableException, EntityNotFoundException, DuplicatedEntityException;
 
     BookResponseDTO UpdateAmountCopies(BookRequestAmountCopiesDTO bookRequestAmountCopiesDTO) throws NotAcceptableException, EntityNotFoundException;
 
@@ -32,4 +33,6 @@ public interface BookService {
     List<Book> getBooksOutOfStock();
 
     List<Book> getBooksNeverBorrowed();
+
+    long count();
 }

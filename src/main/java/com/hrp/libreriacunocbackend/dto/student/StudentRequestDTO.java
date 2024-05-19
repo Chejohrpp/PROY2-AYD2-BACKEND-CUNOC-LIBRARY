@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Value
 public class StudentRequestDTO {
     String username;
-//    String password;
     String name;
     String carnet;
     LocalDateTime birth;

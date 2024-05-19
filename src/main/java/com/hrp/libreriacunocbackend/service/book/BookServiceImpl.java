@@ -8,6 +8,7 @@ import com.hrp.libreriacunocbackend.entities.book.Author;
 import com.hrp.libreriacunocbackend.entities.book.Book;
 import com.hrp.libreriacunocbackend.entities.book.Editorial;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.repository.books.BookRepository;
@@ -37,7 +38,7 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public BookResponseDTO createBook(@Valid BookRequestDTO bookRequestDTO) throws NotAcceptableException, EntityNotFoundException {
+    public BookResponseDTO createBook(@Valid BookRequestDTO bookRequestDTO) throws NotAcceptableException, EntityNotFoundException, DuplicatedEntityException {
         validateBookRequest(bookRequestDTO);
 
         Author author = authorService.getAuthorById(bookRequestDTO.getIdAuthor())
@@ -119,7 +120,12 @@ public class BookServiceImpl implements BookService{
         return bookRepository.findBooksNeverBorrowed();
     }
 
-    private void validateBookRequest(BookRequestDTO bookRequestDTO) throws NotAcceptableException {
+    @Override
+    public long count() {
+        return bookRepository.count();
+    }
+
+    private void validateBookRequest(BookRequestDTO bookRequestDTO) throws NotAcceptableException, DuplicatedEntityException {
         if (bookRequestDTO.getIsbn() == null || bookRequestDTO.getIsbn().isBlank() || bookRequestDTO.getIsbn().length() < 7 || bookRequestDTO.getIsbn().length() > 13) {
             throw new NotAcceptableException("ISBN cannot be null, empty, and must be between 7 and 13 characters");
         }
@@ -143,7 +149,7 @@ public class BookServiceImpl implements BookService{
         }
         Optional<Book> book = bookRepository.findByIsbn(bookRequestDTO.getIsbn());
         if (book.isPresent()){
-            throw new NotAcceptableException("the isbn already present");
+            throw new DuplicatedEntityException("the isbn already present");
         }
 
     }

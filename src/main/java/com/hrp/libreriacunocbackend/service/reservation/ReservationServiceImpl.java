@@ -10,10 +10,12 @@ import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.repository.ReservationRepository;
 import com.hrp.libreriacunocbackend.service.book.BookService;
 import com.hrp.libreriacunocbackend.service.student.StudentService;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public class ReservationServiceImpl implements ReservationService{
     private final ReservationRepository reservationRepository;
     private final StudentService studentService;

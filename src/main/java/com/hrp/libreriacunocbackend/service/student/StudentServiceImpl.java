@@ -8,6 +8,7 @@ import com.hrp.libreriacunocbackend.entities.user.Career;
 import com.hrp.libreriacunocbackend.entities.user.Student;
 import com.hrp.libreriacunocbackend.entities.user.User;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.repository.specifications.user.StudentSpecification;
@@ -41,7 +42,7 @@ public class StudentServiceImpl implements StudentService{
 
     @Transactional
     @Override
-    public StudentResponseDTO createStudent(StudentRequestDTO studentRequestDTO) throws NotAcceptableException,EntityNotFoundException  {
+    public StudentResponseDTO createStudent(StudentRequestDTO studentRequestDTO) throws NotAcceptableException, EntityNotFoundException, DuplicatedEntityException {
 
         /*VALIDATIONS*/
         validateStudentRequest(studentRequestDTO);
@@ -87,7 +88,7 @@ public class StudentServiceImpl implements StudentService{
         return new StudentResponseDTO(student);
     }
 
-    private void validateStudentRequest(StudentRequestDTO studentRequestDTO) throws NotAcceptableException {
+    private void validateStudentRequest(StudentRequestDTO studentRequestDTO) throws NotAcceptableException, DuplicatedEntityException {
         if (studentRequestDTO.getName() == null || studentRequestDTO.getName().isEmpty()) {
             throw new NotAcceptableException("Name cannot be null or empty");
         }
@@ -111,11 +112,11 @@ public class StudentServiceImpl implements StudentService{
         }
         Optional<Student> foundStudent = studentRepository.findByCarnet(studentRequestDTO.getCarnet());
         if (foundStudent.isPresent()) {
-            throw new NotAcceptableException("carnet already taken");
+            throw new DuplicatedEntityException("carnet already taken");
         }
         Optional<User> foundUser = userService.findUser(studentRequestDTO.getUsername());
         if (foundUser.isPresent()){
-            throw new NotAcceptableException("Username already taken");
+            throw new DuplicatedEntityException("Username already taken");
         }
     }
 
@@ -150,6 +151,11 @@ public class StudentServiceImpl implements StudentService{
     @Override
     public List<Student> getStudentsInPenalty() {
         return studentRepository.findStudentsInPenalty();
+    }
+
+    @Override
+    public long count() {
+        return studentRepository.count();
     }
 
 }

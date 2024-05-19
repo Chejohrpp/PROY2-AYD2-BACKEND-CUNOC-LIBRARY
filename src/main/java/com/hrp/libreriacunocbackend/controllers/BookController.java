@@ -5,6 +5,7 @@ import com.hrp.libreriacunocbackend.dto.book.BookRequestAttributeDTO;
 import com.hrp.libreriacunocbackend.dto.book.BookRequestDTO;
 import com.hrp.libreriacunocbackend.dto.book.BookResponseDTO;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.service.book.BookService;
@@ -40,7 +41,7 @@ public class BookController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<BookResponseDTO> create(@RequestBody BookRequestDTO bookRequestDTO) throws NotAcceptableException, EntityNotFoundException {
+    public ResponseEntity<BookResponseDTO> create(@RequestBody BookRequestDTO bookRequestDTO) throws NotAcceptableException, EntityNotFoundException, DuplicatedEntityException {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(bookRequestDTO));
     }
 

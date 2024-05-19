@@ -4,6 +4,7 @@ import com.hrp.libreriacunocbackend.dto.editorial.EditorialRequestDTO;
 import com.hrp.libreriacunocbackend.dto.editorial.EditorialResponseDTO;
 import com.hrp.libreriacunocbackend.entities.book.Editorial;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.repository.books.EditorialRepository;
 import io.micrometer.common.util.StringUtils;
@@ -24,7 +25,7 @@ public class EditorialServiceImpl implements EditorialService {
     }
 
     @Override
-    public EditorialResponseDTO create(EditorialRequestDTO editorialRequestDTO) throws NotAcceptableException {
+    public EditorialResponseDTO create(EditorialRequestDTO editorialRequestDTO) throws NotAcceptableException, DuplicatedEntityException {
         validateEditorialRequest(editorialRequestDTO);
         Editorial editorial = new Editorial();
         editorial.setIdEditorial(editorialRequestDTO.getIdEditorial());
@@ -33,7 +34,7 @@ public class EditorialServiceImpl implements EditorialService {
         return new EditorialResponseDTO(editorial);
     }
 
-    private void validateEditorialRequest(EditorialRequestDTO editorialRequestDTO) throws NotAcceptableException {
+    private void validateEditorialRequest(EditorialRequestDTO editorialRequestDTO) throws NotAcceptableException, DuplicatedEntityException {
         if (editorialRequestDTO.getIdEditorial() == null || editorialRequestDTO.getIdEditorial().isBlank()){
             throw new NotAcceptableException("the id cannot be null or empty");
         }
@@ -44,10 +45,10 @@ public class EditorialServiceImpl implements EditorialService {
             throw new NotAcceptableException("the name cannot be null or empty");
         }
         if (getEditorialById(editorialRequestDTO.getIdEditorial()).isPresent()){
-            throw new NotAcceptableException("id already present");
+            throw new DuplicatedEntityException("id already present");
         }
         if (getEditorialByName(editorialRequestDTO.getName()).isPresent()){
-            throw new NotAcceptableException("name is already present");
+            throw new DuplicatedEntityException("name is already present");
         }
     }
 

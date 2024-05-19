@@ -4,6 +4,7 @@ import com.hrp.libreriacunocbackend.dto.author.AuthorRequestDTO;
 import com.hrp.libreriacunocbackend.dto.author.AuthorResponseDTO;
 import com.hrp.libreriacunocbackend.entities.book.Author;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.repository.books.AuthorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,7 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public AuthorResponseDTO createAuthor(AuthorRequestDTO authorRequestDTO) throws NotAcceptableException {
+    public AuthorResponseDTO createAuthor(AuthorRequestDTO authorRequestDTO) throws NotAcceptableException, DuplicatedEntityException {
         validateAuthorRequest(authorRequestDTO);
         Author author = new Author();
         author.setIdAuthor(authorRequestDTO.getIdAuthor());
@@ -42,7 +43,7 @@ public class AuthorServiceImpl implements AuthorService {
                 .collect(Collectors.toList());
     }
 
-    private void validateAuthorRequest(AuthorRequestDTO authorRequestDTO) throws NotAcceptableException {
+    private void validateAuthorRequest(AuthorRequestDTO authorRequestDTO) throws NotAcceptableException, DuplicatedEntityException {
         if (authorRequestDTO.getIdAuthor() == null || authorRequestDTO.getIdAuthor().isEmpty()) {
             throw new NotAcceptableException("the id cannot be null or empty");
         }
@@ -50,10 +51,10 @@ public class AuthorServiceImpl implements AuthorService {
             throw new NotAcceptableException("Name cannot be null or empty");
         }
         if (getAuthorByName(authorRequestDTO.getName()).isPresent()){
-            throw new NotAcceptableException("Name is already present");
+            throw new DuplicatedEntityException("Name is already present");
         }
         if (getAuthorById(authorRequestDTO.getIdAuthor()).isPresent()){
-            throw new NotAcceptableException("id already present");
+            throw new DuplicatedEntityException("id already present");
         }
     }
 

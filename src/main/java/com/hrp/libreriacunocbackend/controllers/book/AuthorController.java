@@ -3,6 +3,7 @@ package com.hrp.libreriacunocbackend.controllers.book;
 import com.hrp.libreriacunocbackend.dto.author.AuthorRequestDTO;
 import com.hrp.libreriacunocbackend.dto.author.AuthorResponseDTO;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.service.author.AuthorService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class AuthorController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<AuthorResponseDTO> create(@RequestBody AuthorRequestDTO authorRequestDTO) throws NotAcceptableException {
+    public ResponseEntity<AuthorResponseDTO> create(@RequestBody AuthorRequestDTO authorRequestDTO) throws NotAcceptableException, DuplicatedEntityException {
         return ResponseEntity.status(HttpStatus.CREATED).body(authorService.createAuthor(authorRequestDTO));
     }
 

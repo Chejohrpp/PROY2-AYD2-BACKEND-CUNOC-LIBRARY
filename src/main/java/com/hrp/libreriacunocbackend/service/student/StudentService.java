@@ -5,6 +5,7 @@ import com.hrp.libreriacunocbackend.dto.student.StudentRequestDTO;
 import com.hrp.libreriacunocbackend.dto.student.StudentResponseDTO;
 import com.hrp.libreriacunocbackend.entities.user.Student;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.DuplicatedEntityException;
 import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 
@@ -13,7 +14,7 @@ import java.util.Optional;
 
 public interface StudentService {
 
-    StudentResponseDTO createStudent(StudentRequestDTO studentRequestDTO) throws NotAcceptableException, EntityNotFoundException;
+    StudentResponseDTO createStudent(StudentRequestDTO studentRequestDTO) throws NotAcceptableException, EntityNotFoundException, DuplicatedEntityException;
 
     List<StudentResponseDTO> getByRange(Integer startIndex, Integer endIndex) throws NotAcceptableException, BadRequestException;
 
@@ -28,4 +29,6 @@ public interface StudentService {
     List<Student> getAll();
 
     List<Student> getStudentsInPenalty();
+
+    long count();
 }

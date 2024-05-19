@@ -6,10 +6,12 @@ import com.hrp.libreriacunocbackend.entities.Fee;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.repository.FeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@Service
 public class FeeServiceImpl implements FeeService{
     private final FeeRepository feeRepository;
 
