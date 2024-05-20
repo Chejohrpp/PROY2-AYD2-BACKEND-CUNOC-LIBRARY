@@ -33,4 +33,6 @@ public interface BorrowService {
     double calculatePenaltyAmount(Long studentId) throws NotAcceptableException;
 
     long count();
+
+    List<BorrowResponseCompleteDTO> getAll();
 }

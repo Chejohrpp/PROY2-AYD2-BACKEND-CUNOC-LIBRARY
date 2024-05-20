@@ -25,6 +25,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class BorrowServiceImpl implements BorrowService{
@@ -71,6 +72,7 @@ public class BorrowServiceImpl implements BorrowService{
         borrow.setDateBorrow(LocalDate.from(borrowRequestDTO.getDateBorrow()));
         borrow.setBook(book);
         borrow.setStudent(student);
+        borrow.setPriceBorrow(book.getPrice());
         borrow.setState(State.BORROW);
 
         borrow = borrowRepository.save(borrow);
@@ -228,6 +230,16 @@ public class BorrowServiceImpl implements BorrowService{
     @Override
     public long count() {
         return borrowRepository.count();
+    }
+
+    @Override
+    public List<BorrowResponseCompleteDTO> getAll(){
+        //before validate all borrows
+        updateBorrowStatus(borrowRepository.findAll());
+        return borrowRepository.findAll()
+                .stream()
+                .map(BorrowResponseCompleteDTO:: new)
+                .collect(Collectors.toList());
     }
 
 

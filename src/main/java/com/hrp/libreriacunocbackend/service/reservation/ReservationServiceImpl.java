@@ -1,6 +1,7 @@
 package com.hrp.libreriacunocbackend.service.reservation;
 
 import com.hrp.libreriacunocbackend.dto.reservation.ReservationResponseDTO;
+import com.hrp.libreriacunocbackend.dto.reservation.ReservationResponseRangeDTO;
 import com.hrp.libreriacunocbackend.dto.reservation.ReservatonRequestDTO;
 import com.hrp.libreriacunocbackend.entities.Reservation;
 import com.hrp.libreriacunocbackend.entities.book.Book;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ReservationServiceImpl implements ReservationService{
@@ -53,7 +55,10 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     @Override
-    public List<ReservationResponseDTO> getByRange(Integer startIndex, Integer endIndex) throws NotAcceptableException, BadRequestException {
-        return List.of();
+    public List<ReservationResponseRangeDTO> getByRange(Integer startIndex, Integer endIndex) throws NotAcceptableException, BadRequestException {
+        return reservationRepository.findByRange(startIndex, endIndex)
+                .stream()
+                .map(ReservationResponseRangeDTO :: new)
+                .collect(Collectors.toList());
     }
 }

@@ -38,6 +38,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((requests) -> requests
 //                        .requestMatchers(HttpMethod.GET, "/v1/datafile/verifySystemData").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/librarian/create").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v1/datafile/verifySystemData").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/auth/login", "/v1/auth/logout").permitAll()
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())

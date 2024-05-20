@@ -16,6 +16,7 @@ public class BookResponseDTO {
     LocalDate datePublish;
     String editorial;
     Integer amount;
+    Double price;
 
     public BookResponseDTO(Book book){
         this.id = book.getIdBook();
@@ -25,6 +26,7 @@ public class BookResponseDTO {
         this.datePublish = book.getDatePublish();
         this.editorial = book.getEditorial().getName();
         this.amount = book.getAmount();
+        this.price = book.getPrice();
     }
 
 }
