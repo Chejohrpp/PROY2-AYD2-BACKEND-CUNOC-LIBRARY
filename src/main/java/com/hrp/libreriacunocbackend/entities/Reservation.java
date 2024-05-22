@@ -27,10 +27,10 @@ public class Reservation {
     private Boolean isActivate;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "student_user_id_user", referencedColumnName = "user_id_user", insertable = false, updatable = false)
+    @JoinColumn(name = "student_user_id_user")
     private Student student;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "book_id_book", referencedColumnName = "id_book", insertable = false, updatable = false)
+    @JoinColumn(name = "book_id_book")
     private Book book;
 }

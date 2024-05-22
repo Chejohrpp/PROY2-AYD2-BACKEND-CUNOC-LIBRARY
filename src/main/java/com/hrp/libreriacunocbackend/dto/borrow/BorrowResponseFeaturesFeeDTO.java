@@ -2,12 +2,14 @@ package com.hrp.libreriacunocbackend.dto.borrow;
 
 import lombok.Value;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Value
-public class BorrowRequestFeeDTO {
+public class BorrowResponseFeaturesFeeDTO {
     Long idBorrow;
-    LocalDateTime date;
+    String studentName;
+    String bookTitle;
+    LocalDate dateBorrow;
     Double lateFee;
     Double penalty;
     Double regularFee;

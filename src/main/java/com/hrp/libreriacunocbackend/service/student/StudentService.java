@@ -22,13 +22,15 @@ public interface StudentService {
 
     StudentResponseDTO updateStudentStudent(Student student);
 
+    Optional<Student> getByUsername(String username) throws EntityNotFoundException;
+
     Optional<Student> getByCarnet(String carnet);
 
     Optional<Student> getById(Long id);
 
     List<Student> getAll();
 
-    List<Student> getStudentsInPenalty();
+    List<StudentResponseDTO> getStudentsInPenalty();
 
     long count();
 }

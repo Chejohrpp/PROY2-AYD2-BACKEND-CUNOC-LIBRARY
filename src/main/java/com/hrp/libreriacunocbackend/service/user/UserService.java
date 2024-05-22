@@ -3,6 +3,7 @@ package com.hrp.libreriacunocbackend.service.user;
 import com.hrp.libreriacunocbackend.dto.librarian.LibrarianRequestDTO;
 import com.hrp.libreriacunocbackend.dto.librarian.LibrarianResponseDTO;
 import com.hrp.libreriacunocbackend.dto.user.UserRequestDTO;
+import com.hrp.libreriacunocbackend.dto.user.UserRequestUpdateDTO;
 import com.hrp.libreriacunocbackend.entities.user.User;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 
@@ -17,5 +18,5 @@ public interface UserService {
 
     Optional<User> findUser(String username);
 
-    User editUser(UserRequestDTO userRequestDTO) throws NotAcceptableException;
+    User editUser(UserRequestUpdateDTO userRequestDTO) throws NotAcceptableException;
 }

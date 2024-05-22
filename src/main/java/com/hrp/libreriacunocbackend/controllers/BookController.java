@@ -24,7 +24,6 @@ import java.util.Set;
 import static java.util.stream.Collectors.toList;
 
 @Controller
-@PreAuthorize("hasRole('LIBRARIAN')")
 @RequestMapping("/v1/book")
 public class BookController {
 
@@ -36,28 +35,39 @@ public class BookController {
     }
 
     @GetMapping("getAll")
+    @PreAuthorize("hasRole('LIBRARIAN') OR hasRole('STUDENT')")
     public ResponseEntity<List<BookResponseDTO>> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getAll());
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<BookResponseDTO> create(@RequestBody BookRequestDTO bookRequestDTO) throws NotAcceptableException, EntityNotFoundException, DuplicatedEntityException {
         return ResponseEntity.status(HttpStatus.CREATED).body(bookService.createBook(bookRequestDTO));
     }
 
     @PostMapping("/update_amount_copies")
+    @PreAuthorize("hasRole('LIBRARIAN')")
     public ResponseEntity<BookResponseDTO> updateAmountCopies(@RequestBody BookRequestAmountCopiesDTO bookRequestAmountCopiesDTO) throws NotAcceptableException, EntityNotFoundException {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.UpdateAmountCopies(bookRequestAmountCopiesDTO));
     }
 
     @GetMapping("get_range/{startIndex}/{endIndex}")
+    @PreAuthorize("hasRole('LIBRARIAN') OR hasRole('STUDENT')")
     public ResponseEntity<List<BookResponseDTO>> getByRange(@PathVariable(name = "startIndex") Integer startIndex, @PathVariable(name = "endIndex") Integer endIndex) throws NotAcceptableException, BadRequestException {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getByRange(startIndex, endIndex));
     }
 
     @GetMapping("get_attribute_filter")
+    @PreAuthorize("hasRole('LIBRARIAN') OR hasRole('STUDENT')")
     public ResponseEntity<List<BookResponseDTO>> getByAttribute(@RequestBody BookRequestAttributeDTO bookRequestAttributeDTO) throws BadRequestException {
         return ResponseEntity.status(HttpStatus.OK).body(bookService.getByAttribute(bookRequestAttributeDTO));
+    }
+
+    @GetMapping("get_id/{id}")
+    @PreAuthorize("hasRole('LIBRARIAN') OR hasRole('STUDENT')")
+    public ResponseEntity<BookResponseDTO> getByIdResponse(@PathVariable(name = "id") Long id) throws EntityNotFoundException {
+        return ResponseEntity.status(HttpStatus.OK).body(bookService.getByIdResponse(id));
     }
 
 

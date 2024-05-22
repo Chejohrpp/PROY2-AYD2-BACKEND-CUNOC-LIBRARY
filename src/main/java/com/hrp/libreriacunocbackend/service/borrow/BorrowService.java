@@ -1,6 +1,10 @@
 package com.hrp.libreriacunocbackend.service.borrow;
 
 import com.hrp.libreriacunocbackend.dto.borrow.*;
+import com.hrp.libreriacunocbackend.dto.report.BorrowedCareerIntervalResponseDTO;
+import com.hrp.libreriacunocbackend.dto.report.LateFeeBorrowsStudentIntervalResponseDTO;
+import com.hrp.libreriacunocbackend.dto.report.StudentMostBorrowIntervalResponseDTO;
+import com.hrp.libreriacunocbackend.dto.report.TotalRevenueIntervalResponseDTO;
 import com.hrp.libreriacunocbackend.entities.Borrow;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
 import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
@@ -16,17 +20,19 @@ public interface BorrowService {
 
     BorrowResponseUpdateStateDTO updateState(BorrowRequestUpdateStateDTO borrowRequestUpdateStateDTO) throws EntityNotFoundException;
 
+    BorrowResponseFeaturesFeeDTO findBorrow(Long id) throws EntityNotFoundException, NotAcceptableException;
+
     BorrowResponseFeeDTO returnBook(BorrowRequestFeeDTO borrowRequestFeeDTO) throws EntityNotFoundException, NotAcceptableException;
 
-    Map<String, Object> getMostBorrowedCareerInInterval(LocalDate startDate, LocalDate endDate);
+    BorrowedCareerIntervalResponseDTO getMostBorrowedCareerInInterval(LocalDate startDate, LocalDate endDate);
 
-    Map<String, Object> getLateFeesAndLateBorrowsByStudentAndInterval(Long studentId, LocalDate startDate, LocalDate endDate);
+    LateFeeBorrowsStudentIntervalResponseDTO getLateFeesAndLateBorrowsByStudentAndInterval(Long studentId, LocalDate startDate, LocalDate endDate);
 
-    Map<String, Object> getStudentWithMostBorrowsInInterval(LocalDate startDate, LocalDate endDate);
+    StudentMostBorrowIntervalResponseDTO getStudentWithMostBorrowsInInterval(LocalDate startDate, LocalDate endDate);
 
     List<Borrow> getActivateBorrowsByStudent(Long studentId);
 
-    List<Borrow> getCurrentBorrowsByStudent(Long studentId);
+    List<BorrowResponseCompleteDTO> getCurrentBorrowsByStudent(Long studentId);
 
     void updateBorrowStatus(List<Borrow> borrows);
 
@@ -35,4 +41,12 @@ public interface BorrowService {
     long count();
 
     List<BorrowResponseCompleteDTO> getAll();
+
+    List<BorrowResponseCompleteDTO> getLateBorrows();
+
+    List<BorrowResponseCompleteDTO> getBorrowsToBeReturnedToday(LocalDate date);
+
+    List<BorrowResponseCompleteDTO> getBorrowsToBeReturnedOnDate(LocalDate date);
+
+    TotalRevenueIntervalResponseDTO getTotalRevenueInInterval(LocalDate startDate, LocalDate endDate);
 }

@@ -111,13 +111,27 @@ public class BookServiceImpl implements BookService{
     }
 
     @Override
-    public List<Book> getBooksOutOfStock() {
-        return bookRepository.findBooksOutOfStock();
+    public BookResponseDTO getByIdResponse(Long id) throws EntityNotFoundException {
+        Book book = bookRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("book with the id %s not found", id)));
+        return new BookResponseDTO(book);
+    }
+
+
+    @Override
+    public List<BookResponseDTO> getBooksOutOfStock() {
+        return bookRepository.findBooksOutOfStock()
+                .stream()
+                .map(BookResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
-    public List<Book> getBooksNeverBorrowed(){
-        return bookRepository.findBooksNeverBorrowed();
+    public List<BookResponseDTO> getBooksNeverBorrowed(){
+        return bookRepository.findBooksNeverBorrowed()
+                .stream()
+                .map(BookResponseDTO::new)
+                .collect(Collectors.toList());
     }
 
     @Override

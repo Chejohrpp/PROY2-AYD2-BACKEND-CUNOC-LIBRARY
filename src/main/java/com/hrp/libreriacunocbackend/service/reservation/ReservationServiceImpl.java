@@ -7,6 +7,7 @@ import com.hrp.libreriacunocbackend.entities.Reservation;
 import com.hrp.libreriacunocbackend.entities.book.Book;
 import com.hrp.libreriacunocbackend.entities.user.Student;
 import com.hrp.libreriacunocbackend.exceptions.BadRequestException;
+import com.hrp.libreriacunocbackend.exceptions.EntityNotFoundException;
 import com.hrp.libreriacunocbackend.exceptions.NotAcceptableException;
 import com.hrp.libreriacunocbackend.repository.ReservationRepository;
 import com.hrp.libreriacunocbackend.service.book.BookService;
@@ -31,10 +32,10 @@ public class ReservationServiceImpl implements ReservationService{
     }
 
     @Override
-    public ReservationResponseDTO create(ReservatonRequestDTO reservatonRequestDTO) throws NotAcceptableException {
+    public ReservationResponseDTO create(ReservatonRequestDTO reservatonRequestDTO) throws NotAcceptableException, EntityNotFoundException {
         // Obtener el estudiante y el libro basados en los IDs proporcionados
-        Student student =studentService.getById(reservatonRequestDTO.getIdUser())
-                .orElseThrow(() -> new NotAcceptableException("Estudiante no encontrado con ID: " + reservatonRequestDTO.getIdUser()));
+        Student student =studentService.getByUsername(reservatonRequestDTO.getUsername())
+                .orElseThrow(() -> new EntityNotFoundException("Estudiante no encontrado con username: " + reservatonRequestDTO.getUsername()));
         Book book = bookService.getById(reservatonRequestDTO.getIdBook())
                 .orElseThrow(() -> new NotAcceptableException("Libro no encontrado con ID: " + reservatonRequestDTO.getIdBook()));
 
@@ -45,7 +46,7 @@ public class ReservationServiceImpl implements ReservationService{
 
         // Crear la reserva
         Reservation reservation = new Reservation();
-        reservation.setDate(LocalDate.parse(reservatonRequestDTO.getDate()));
+        reservation.setDate(LocalDate.from(reservatonRequestDTO.getDate()));
         reservation.setStudent(student);
         reservation.setBook(book);
         reservation.setIsActivate(true);
@@ -56,6 +57,15 @@ public class ReservationServiceImpl implements ReservationService{
 
     @Override
     public List<ReservationResponseRangeDTO> getByRange(Integer startIndex, Integer endIndex) throws NotAcceptableException, BadRequestException {
+        if (startIndex == null || endIndex == null) {
+            throw new NotAcceptableException("Indices no pueden ser nulos");
+        }
+        if (startIndex < 0 || endIndex < 0) {
+            throw new NotAcceptableException("Indices no pueden ser negativos");
+        }
+        if (startIndex > endIndex) {
+            throw new BadRequestException("El índice de inicio no puede ser mayor que el índice de fin");
+        }
         return reservationRepository.findByRange(startIndex, endIndex)
                 .stream()
                 .map(ReservationResponseRangeDTO :: new)

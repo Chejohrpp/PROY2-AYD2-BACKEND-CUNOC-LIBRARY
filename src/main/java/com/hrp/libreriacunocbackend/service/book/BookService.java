@@ -30,9 +30,11 @@ public interface BookService {
 
     Optional<Book> getById(Long id);
 
-    List<Book> getBooksOutOfStock();
+    BookResponseDTO getByIdResponse(Long id) throws EntityNotFoundException;
 
-    List<Book> getBooksNeverBorrowed();
+    List<BookResponseDTO> getBooksOutOfStock();
+
+    List<BookResponseDTO> getBooksNeverBorrowed();
 
     long count();
 }

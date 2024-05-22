@@ -22,14 +22,28 @@ public class FeeServiceImpl implements FeeService{
 
     @Override
     public FeeResponseDTO create(FeeRequestDTO feeRequestDTO) throws NotAcceptableException {
+        if (feeRequestDTO.getBorrow() == null) {
+            throw new NotAcceptableException("Borrow cannot be null");
+        }
+        if (feeRequestDTO.getDate() == null) {
+            throw new NotAcceptableException("Date cannot be null");
+        }
+        if (feeRequestDTO.getFee() == null) {
+            throw new NotAcceptableException("Fee cannot be null");
+        }
+        if (feeRequestDTO.getLateFee() == null) {
+            throw new NotAcceptableException("Late fee cannot be null");
+        }
+
         Fee fee = new Fee();
         fee.setFee(feeRequestDTO.getFee());
-        fee.setLateFee(fee.getLateFee());
+        fee.setLateFee(feeRequestDTO.getLateFee());
         fee.setBorrow(feeRequestDTO.getBorrow());
         fee.setDate(LocalDate.from(feeRequestDTO.getDate()));
         fee = feeRepository.save(fee);
         return new FeeResponseDTO(fee);
     }
+
 
     @Override
     public List<Fee> findLateFeesByStudentAndInterval(Long studentId, LocalDate startDate, LocalDate endDate){

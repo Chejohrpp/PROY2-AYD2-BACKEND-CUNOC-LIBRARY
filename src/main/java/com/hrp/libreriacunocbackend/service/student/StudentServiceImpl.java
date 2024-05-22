@@ -68,7 +68,17 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public List<StudentResponseDTO> getByRange(Integer startIndex, Integer endIndex) throws NotAcceptableException, BadRequestException {
-        return studentRepository.findByRange(startIndex,endIndex)
+        if (startIndex == null || endIndex == null) {
+            throw new BadRequestException("Los índices de rango no pueden ser nulos.");
+        }
+        if (startIndex < 0 || endIndex < 0) {
+            throw new BadRequestException("Los índices de rango no pueden ser negativos.");
+        }
+        if (startIndex >= endIndex) {
+            throw new NotAcceptableException("El índice de inicio debe ser menor que el índice de fin.");
+        }
+
+        return studentRepository.findByRange(startIndex, endIndex)
                 .stream()
                 .map(StudentResponseDTO::new)
                 .collect(Collectors.toList());
@@ -76,16 +86,30 @@ public class StudentServiceImpl implements StudentService{
 
     @Override
     public List<StudentResponseDTO> getByAttribute(StudentRequestAttributeDTO studentRequestAttributeDTO) throws NotAcceptableException, BadRequestException {
+        if (studentRequestAttributeDTO.getAttributesName() == null || studentRequestAttributeDTO.getAttributesName().isEmpty()) {
+            throw new BadRequestException("AttributesName cannot be null or empty");
+        }
+        if (studentRequestAttributeDTO.getFilter() == null || studentRequestAttributeDTO.getFilter().isEmpty()) {
+            throw new BadRequestException("Filter cannot be null or empty");
+        }
         return studentRepository.findAll(StudentSpecification.likeAttributes(studentRequestAttributeDTO.getAttributesName(), studentRequestAttributeDTO.getFilter()))
                 .stream()
                 .map(StudentResponseDTO::new)
                 .collect(Collectors.toList());
     }
 
+
     @Override
     public StudentResponseDTO updateStudentStudent(Student student){
         student = studentRepository.save(student);
         return new StudentResponseDTO(student);
+    }
+
+    @Override
+    public Optional<Student> getByUsername(String username) throws EntityNotFoundException {
+        User user = userService.findUser(username)
+                .orElseThrow(() -> new EntityNotFoundException(String.format("username %s not found", username)));
+        return studentRepository.findById(user.getIdUser());
     }
 
     private void validateStudentRequest(StudentRequestDTO studentRequestDTO) throws NotAcceptableException, DuplicatedEntityException {
@@ -149,8 +173,11 @@ public class StudentServiceImpl implements StudentService{
     }
 
     @Override
-    public List<Student> getStudentsInPenalty() {
-        return studentRepository.findStudentsInPenalty();
+    public List<StudentResponseDTO> getStudentsInPenalty() {
+        return studentRepository.findStudentsInPenalty()
+                .stream()
+                .map(StudentResponseDTO:: new)
+                .collect(Collectors.toList());
     }
 
     @Override
